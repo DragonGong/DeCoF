@@ -11,9 +11,12 @@ def load_json(path):
 
 
 def get_available_device():
-    if torch.backends.mps.is_available():  # 检查 Apple MPS 是否可用
+    if torch.backends.mps.is_available():  # Apple Silicon (M1/M2/M3/M4)
+        print("device is mps")
         return torch.device("mps")
-    elif torch.cuda.is_available():        # 检查 NVIDIA CUDA 是否可用
+    elif torch.cuda.is_available():        # NVIDIA GPU
+        print("device is cuda")
         return torch.device("cuda")
-    else:
+    else:                                  # CPU fallback
+        print("device is cpu")
         return torch.device("cpu")
