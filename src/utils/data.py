@@ -19,8 +19,8 @@ warnings.filterwarnings('ignore')
 
 
 class Dataset(Dataset):
-	def __init__(self,phase='train',data_name='',image_size=224,n_frames=8):
-		assert phase in ['train','val','test']
+	def __init__(self,phase='Train',data_name='',image_size=224,n_frames=8):
+		assert phase in ['Train','Val','Test']
 		
 
 		folder_list,label_list=init_ff(phase,data_name)

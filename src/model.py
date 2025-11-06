@@ -3,7 +3,7 @@ from torch import nn
 from utils.sam import SAM
 from vit import ViT
 from clip_models import  CLIPModel
-
+from utils.funcs import get_available_device
 
 class Detector(nn.Module):
 
@@ -16,8 +16,9 @@ class Detector(nn.Module):
         self.net_all=ViT()   
         self.cel=nn.CrossEntropyLoss()
         self.optimizer=SAM(self.net_all.parameters(),torch.optim.SGD,lr=0.001,momentum=0.9)
+        self.device = get_available_device()
     def forward(self,x,return_feature=False):
-        y=torch.zeros(len(x),8,768).cuda()
+        y=torch.zeros(len(x),8,768).to(self.device) 
         
         for i in range(len(x)):
            

@@ -1,0 +1,4 @@
+# python script/train_ds_m.py --input '/Volumes/My Passport/dataset/decor/test_train' --output ./data --dataset test_data --split Train --label 1_fake
+# python script/train_ds_m.py --input '/Volumes/My Passport/dataset/decor/test_val' --output ./data --dataset test_data --split Train --label 0_real
+# python script/train_ds_m.py --input '/Volumes/My Passport/dataset/decor/test_val/fake' --output ./data --dataset test_data --split Val --label 1_fake
+python script/train_ds_m.py --input '/Volumes/My Passport/dataset/decor/test_val/real' --output ./data --dataset test_data --split Val --label 0_real

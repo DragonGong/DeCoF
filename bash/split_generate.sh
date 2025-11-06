@@ -1,0 +1,1 @@
+python script/generate_split_json.py  --data_root ./data --dataset test_data --split Val --output_split_dir datas/split
