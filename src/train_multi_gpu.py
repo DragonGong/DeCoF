@@ -11,7 +11,7 @@ from utils.logs import log
 from utils.funcs import load_json
 from datetime import datetime
 from tqdm import tqdm
-from model import Detector
+from detect import Detector
 from utils.sam import SAM
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP

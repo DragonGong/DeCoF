@@ -90,7 +90,6 @@ class ViT(nn.Module):
             nn.LayerNorm(dim),
             nn.Linear(dim, num_classes)
         )
-        # self.device = get_available_device()
 
         
 
