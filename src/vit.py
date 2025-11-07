@@ -90,16 +90,16 @@ class ViT(nn.Module):
             nn.LayerNorm(dim),
             nn.Linear(dim, num_classes)
         )
-        self.device = get_available_device()
+        # self.device = get_available_device()
 
         
 
     def forward(self, x,return_feature=False ):
         b, n, _ = x.shape           
-
-        cls_tokens = repeat(self.cls_token, '() n d -> b n d', b=b).to(self.device) 
+        device = x.device
+        cls_tokens = repeat(self.cls_token, '() n d -> b n d', b=b).to(device)
         x = torch.cat((cls_tokens, x), dim=1)               
-        x += self.pos_embedding[:, :(n+1)]                  
+        x += self.pos_embedding[:, :(n+1)].to(device)                  
         x = self.dropout(x)
 
         x = self.transformer(x)                                                 

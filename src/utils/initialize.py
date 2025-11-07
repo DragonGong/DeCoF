@@ -13,7 +13,7 @@ import os.path as osp
 
 
 def init_ff(phase,data_name='text2video_zero'):
-	root = '/Users/mac/data/workspace/opensource/DeCoF/data'
+	root = '/data/ganpa/DeCoF/data'
 
 	dataset_path_r=os.path.join(root,data_name,phase,'0_real/')
 	
