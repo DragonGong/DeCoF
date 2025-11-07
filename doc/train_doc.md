@@ -46,10 +46,16 @@ src/utils/initialize.py
 然后直接bash/train.sh
 
 ~~~
-python src/train.py src/configs/base.json -n DeCoF_test
+CUDA_VISIBLE_DEVICES=0 python src/train.py src/configs/base.json -n DeCoF_test
 ~~~
 
 -n 是模型名称
+
+多卡
+
+~~~
+torchrun --nproc_per_node=4 src/train_multi_gpu.py src/configs/base.json -n DeCoF_ivy 
+~~~
 
 
 

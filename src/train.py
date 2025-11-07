@@ -12,7 +12,7 @@ from utils.logs import log
 from utils.funcs import load_json ,get_available_device
 from datetime import datetime
 from tqdm import tqdm
-from model import Detector
+from detect import Detector
 
 def compute_accuray(pred,true):
     pred_idx=pred.argmax(dim=1).cpu().data.numpy()

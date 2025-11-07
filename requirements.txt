@@ -1,0 +1,9 @@
+joblib
+librosa
+numpy==2.2.6
+pandas
+
+torch==2.7.1
+torchaudio==2.7.1
+
+scikit-learn==1.7.1
