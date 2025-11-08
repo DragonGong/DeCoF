@@ -2,7 +2,7 @@ import os
 import cv2
 from PIL import Image
 import argparse
-
+from tqdm import tqdm
 def extract_and_process_video(video_path, output_dir, num_total_frames=32, num_sampled=8):
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
@@ -67,12 +67,12 @@ def main(input_folder, output_root, dataset_name="Text2Video_Zero", split="Test"
     # 构建目标路径: data/{dataset}/{split}/{label}/{video_id}/
     base_output_dir = os.path.join(output_root, dataset_name, split, label)
 
-    for video_file in video_files:
+    for video_file in tqdm(video_files, desc="Processing videos", ncols=100, unit="video"):
         video_id = os.path.splitext(video_file)[0]  # 仅文件名，不含扩展名
         video_path = os.path.join(input_folder, video_file)
         output_subdir = os.path.join(base_output_dir, video_id)  # 注意：这里不再拼 label_
 
-        print(f"处理: {video_file} -> {output_subdir}")
+        # print(f"处理: {video_file} -> {output_subdir}")
         success = extract_and_process_video(video_path, output_subdir)
         if not success:
             print(f"跳过: {video_file}")
