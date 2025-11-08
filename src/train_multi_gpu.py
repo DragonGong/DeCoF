@@ -51,9 +51,13 @@ def main(args):
     n_frames = cfg['n_frames']
     subdatasets_name = cfg['subdatasets_name']
     n_epoch = cfg['epoch']
+    trained_model_path = cfg['trained_model']
 
     # Model
     model = Detector().to(local_rank)
+    if trained_model_path != "":
+        checkpoint = torch.load(trained_model_path)
+        model.net_all.load_state_dict(checkpoint["model"])
     model = DDP(model, device_ids=[local_rank], find_unused_parameters=False)
 
     # Dataset & DataLoader with DistributedSampler
