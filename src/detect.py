@@ -9,7 +9,7 @@ class Detector(nn.Module):
 
     def __init__(self):
         super(Detector, self).__init__()
-        self.net=CLIPModel(name='ViT-L/14')
+        self.net=CLIPModel(name='./pretrained_models/ViT-L-14.pt')
         for name, p in self.net.named_parameters():
             p.requires_grad = False
 
