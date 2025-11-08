@@ -1,27 +1,64 @@
+import time 
 import os
 import sys
 import pandas as pd
-
+import shutil 
 import os
 import torch
 import torch.nn.functional as F
 from PIL import Image
 from torchvision import transforms
+sys.path.append(os.path.join(os.path.dirname(__file__), 'src')) 
 from detect import Detector  
+import cv2 
 
 
+def extract_and_process_video(video_path, output_dir, num_total_frames=32, num_sampled=8):
+    # 如果 output_dir 已存在，先删除整个目录
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir)
 
-def extract_frames(video_path):
-    """
-    提取视频中的帧。
-    
-    Args:
-        video_path (str): 视频文件的路径。
-        
-    Returns:
-        str: 包含提取帧的文件夹路径。
-    """
-    raise NotImplementedError("This function should be implemented by the user.")
+    cap = cv2.VideoCapture(video_path)
+    if not cap.isOpened():
+        print(f"无法打开视频: {video_path}")
+        return False
+
+    frames = []
+    while len(frames) < num_total_frames:
+        ret, frame = cap.read()
+        if not ret:
+            break
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frames.append(frame_rgb)
+    cap.release()
+
+    if len(frames) == 0:
+        print(f"视频无帧: {video_path}")
+        return False
+
+    if len(frames) < num_total_frames:
+        print(f"警告: 视频 {video_path} 帧数不足32 ({len(frames)})，将用最后一帧补足")
+        while len(frames) < num_total_frames:
+            frames.append(frames[-1])
+
+    step = num_total_frames // num_sampled  # 4
+    sampled_indices = [i * step for i in range(num_sampled)]
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    for idx, frame_idx in enumerate(sampled_indices):
+        frame = frames[frame_idx]
+        h, w = frame.shape[:2]
+        crop_size = min(h, w)
+        start_h = (h - crop_size) // 2
+        start_w = (w - crop_size) // 2
+        cropped = frame[start_h:start_h + crop_size, start_w:start_w + crop_size]
+
+        img_pil = Image.fromarray(cropped)
+        img_path = os.path.join(output_dir, f"{idx:03d}.jpg")
+        img_pil.save(img_path, quality=95)
+
+    return output_dir
 
 def predict_todo(file_path, model_path='model.pth'):
     """
@@ -45,10 +82,13 @@ def predict_todo(file_path, model_path='model.pth'):
     model.eval()
 
     # === 2. 调用用户提供的函数提取帧 ===
-    frame_folder_path = extract_frames(file_path)  # 返回帧所在的文件夹路径
+    t = time.time()
+    frame_folder_path = extract_and_process_video(file_path,"output_tmp")  # 返回帧所在的文件夹路径
+    print(f"extract time is {time.time()-t} ")
     n_frames = len([f for f in os.listdir(frame_folder_path) if f.endswith('.jpg')])
     if n_frames == 0:
-        raise ValueError(f"No frames found in {frame_folder_path}. Check your extract_frames implementation.")
+        return 0 , 1 
+        # raise ValueError(f"No frames found in {frame_folder_path}. Check your extract_frames implementation.")
     
     # === 3. 构建测试阶段的 transform（与 Dataset 中完全一致）===
     test_transform = transforms.Compose([
@@ -85,5 +125,5 @@ def predict_todo(file_path, model_path='model.pth'):
     return (label, confidence)
 
 if __name__ == "__main__":
-    r , c = predict_todo(file_path="" ,model_path= "")
+    r , c = predict_todo(file_path="input_test/0a169eb3345847089028dbac81331cf6a25f4107e80cce3676036d3dcc748eec.mp4" ,model_path= "output/DeCoF_ivy_base_11_07_22_49_35/weights/9_0.9745_val.tar")
     print(f"result is {r},confidence is {c}")
