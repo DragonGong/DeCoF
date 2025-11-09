@@ -71,7 +71,7 @@ def main(args):
         train_dataset,
         batch_size=batch_size,
         sampler=train_sampler,
-        num_workers=20,  # reduced from 20 to avoid too many threads per process
+        num_workers=10,  # reduced from 20 to avoid too many threads per process
         pin_memory=True,
         # drop_last=True  # optional, but helps with consistent batch size
     )
@@ -79,7 +79,7 @@ def main(args):
         val_dataset,
         batch_size=batch_size,
         sampler=val_sampler,
-        num_workers=20,
+        num_workers=10,
         pin_memory=True,
         # drop_last=False
     )
