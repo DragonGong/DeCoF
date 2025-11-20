@@ -9,10 +9,10 @@ from utils.scheduler import LinearDecayLR
 from sklearn.metrics import roc_auc_score, accuracy_score
 import argparse
 from utils.logs import log
-from utils.funcs import load_json
+from utils.funcs import load_json ,get_available_device
 from datetime import datetime
 from tqdm import tqdm
-from model import Detector
+from detect import Detector
 
 def compute_accuray(pred,true):
     pred_idx=pred.argmax(dim=1).cpu().data.numpy()
@@ -26,7 +26,7 @@ def main(args):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-    device = torch.device('cuda')
+    device = get_available_device()
 
     #print(device)
 
@@ -41,20 +41,20 @@ def main(args):
     
 
     
-    train_dataset=Dataset(phase='train',data_name=subdatasets_name,image_size=image_size,n_frames=n_frames)
-    val_dataset=Dataset(phase='val',data_name=subdatasets_name,image_size=image_size,n_frames=n_frames)
+    train_dataset=Dataset(phase='Train',data_name=subdatasets_name,image_size=image_size,n_frames=n_frames)
+    val_dataset=Dataset(phase='Val',data_name=subdatasets_name,image_size=image_size,n_frames=n_frames)
    
     train_loader=torch.utils.data.DataLoader(train_dataset,
                         batch_size=batch_size,
                         shuffle=True,
-                        num_workers=20,
+                        # num_workers=20,
                         pin_memory=True,
                         
                         )
     val_loader=torch.utils.data.DataLoader(val_dataset,
                         batch_size=batch_size,
                         shuffle=False,
-                        num_workers=20,
+                        # num_workers=20,
                         pin_memory=True,
                         )
 
@@ -72,9 +72,9 @@ def main(args):
 
     now=datetime.now()
     save_path='./output/{}_'.format(args.session_name)+now.strftime(os.path.splitext(os.path.basename(args.config))[0])+'_'+now.strftime("%m_%d_%H_%M_%S")+'/'
-    os.mkdir(save_path)
-    os.mkdir(save_path+'weights/')
-    os.mkdir(save_path+'logs/')
+    os.makedirs(save_path,exist_ok = True)
+    os.makedirs(save_path+'weights/')
+    os.makedirs(save_path+'logs/')
     logger = log(path=save_path+"logs/", file="losses.logs")
 
     criterion=nn.CrossEntropyLoss()

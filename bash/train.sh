@@ -1,0 +1,1 @@
+python src/train.py src/configs/base.json -n DeCoF_test
